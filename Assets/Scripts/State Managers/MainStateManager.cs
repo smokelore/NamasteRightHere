@@ -23,6 +23,7 @@ public class MainStateManager : MonoBehaviour {
 	void Awake () 
 	{
 		instance = this;
+		Input.gyro.enabled = true;
 	}
 
 	void Start () 
@@ -39,6 +40,7 @@ public class MainStateManager : MonoBehaviour {
 
 	void Update() 
 	{
+		Debug.Log("Angle: " + Input.gyro.attitude);
 		Execute();
 	}
 
@@ -99,7 +101,6 @@ public class MainStateManager : MonoBehaviour {
 
 	void PoseUpdate() 
 	{
-		Debug.Log("Angle: " + Sphere.Handle.GetVector3ToTarget());
 		SoundHandler.instance.AlterFrequenciesByVector3(Sphere.Handle.GetVector3ToTarget());
 
 		if (Sphere.Handle.hitTimer >= hitDuration)
