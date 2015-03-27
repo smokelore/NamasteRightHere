@@ -12,9 +12,12 @@ public class MainStateManager : MonoBehaviour {
 	public SimpleStateMachine stateMachine;
 	SimpleState menuState, calibrateState, poseState, winState;
 
-	// Note: it is common to have the SampleStateManager oversee other StateManagers. (calling their StateManager.Execute() methods within this SampleStateManager's appropriate states' update method).
-		// For example, if there were a BossStateManager attached to the boss enemy and it was defeated, the BossStateManager might enter the deathState. 
-		// This SampleStateManager might see that the BossStateManager was in the deathState (ie. bossStateManager.state == "DEATH") and cause a transition to the winState as a result.
+	public SphereHandler Sphere;
+	public GameObject Target;
+	public float hitDuration;
+
+	public Sinus Sinus;
+
 	#endregion
 
 	void Awake () 
@@ -63,23 +66,32 @@ public class MainStateManager : MonoBehaviour {
 	#endregion
 
 	#region CALIBRATE
+	Timer calibrateTimer;
+
 	void CalibrateEnter() 
 	{
-
+		calibrateTimer = new Timer(10.0f);
 	}
 
 	void CalibrateUpdate() 
 	{
-
+		Target.transform.position = (Camera.main.transform.position - Sphere.transform.position).normalized;
+		if (calibrateTimer.Percent() >= 1.0f)
+		{
+			stateMachine.SwitchStates(poseState);
+			Handheld.Vibrate();
+		}
 	}	
 
 	void CalibrateExit()
 	{
-
+		Sphere.SetNextTargetPosition();
 	}
 	#endregion
 
 	#region POSE
+	int score = 0;
+
 	void PoseEnter() 
 	{
 		
@@ -87,10 +99,23 @@ public class MainStateManager : MonoBehaviour {
 
 	void PoseUpdate() 
 	{
-		
+		Debug.Log("Angle: " + Sphere.Handle.GetVector3ToTarget());
+		SoundHandler.instance.AlterFrequenciesByVector3(Sphere.Handle.GetVector3ToTarget());
+
+		if (Sphere.Handle.hitTimer >= hitDuration)
+		{
+			Sphere.SetNextTargetPosition();
+			Handheld.Vibrate();
+			score++;
+		}
+
+		if (score > 20)
+		{
+			stateMachine.SwitchStates(winState);
+		}
 	}
 
-	void PoseExit() 
+	void PoseExit()
 	{
 
 	}
