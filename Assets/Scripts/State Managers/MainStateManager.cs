@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,7 +17,10 @@ public class MainStateManager : MonoBehaviour {
 	public GameObject Target;
 	public float hitDuration;
 
-	public Sinus Sinus;
+	public GameObject MenuCanvasObject;
+	public GameObject CalibrateCanvasObject;
+	public Text numSeconds;
+	public GameObject WinCanvasObject;
 
 	#endregion
 
@@ -24,6 +28,8 @@ public class MainStateManager : MonoBehaviour {
 	{
 		instance = this;
 		Input.gyro.enabled = true;
+		CalibrateCanvasObject.SetActive(false);
+		WinCanvasObject.SetActive(false);
 	}
 
 	void Start () 
@@ -35,7 +41,7 @@ public class MainStateManager : MonoBehaviour {
 		winState = new SimpleState(WinEnter, WinUpdate, WinExit, "[WIN]");
 
 		// this is how you switch states!
-		stateMachine.SwitchStates(calibrateState);
+		stateMachine.SwitchStates(menuState);
 	}
 
 	void Update() 
@@ -53,17 +59,20 @@ public class MainStateManager : MonoBehaviour {
 	#region MENU
 	void MenuEnter() 
 	{
-		
+		MenuCanvasObject.SetActive(true);
 	}
 
 	void MenuUpdate() 
 	{
-		
+		if (Input.touchCount > 0)
+		{
+			stateMachine.SwitchStates(calibrateState);
+		}
 	}	
 
 	void MenuExit()
 	{
-		
+		MenuCanvasObject.SetActive(false);
 	}
 	#endregion
 
@@ -72,12 +81,16 @@ public class MainStateManager : MonoBehaviour {
 
 	void CalibrateEnter() 
 	{
+		CalibrateCanvasObject.SetActive(true);
 		calibrateTimer = new Timer(10.0f);
 	}
 
 	void CalibrateUpdate() 
 	{
 		Target.transform.position = (Camera.main.transform.position - Sphere.transform.position).normalized;
+
+		numSeconds.text = "" + (10 - (int)(10 *  	calibrateTimer.Percent()));
+
 		if (calibrateTimer.Percent() >= 1.0f)
 		{
 			stateMachine.SwitchStates(poseState);
@@ -87,6 +100,7 @@ public class MainStateManager : MonoBehaviour {
 
 	void CalibrateExit()
 	{
+		CalibrateCanvasObject.SetActive(false);
 		Sphere.SetNextTargetPosition();
 	}
 	#endregion
@@ -123,19 +137,26 @@ public class MainStateManager : MonoBehaviour {
 	#endregion
 
 	#region WIN
+	Timer winTimer;
 	void WinEnter() 
 	{
-		
+		WinCanvasObject.SetActive(true);
+		winTimer = new Timer(10.0f);
 	}
 
 	void WinUpdate() 
 	{
-		
+		Handheld.Vibrate();
+
+		if (winTimer.Percent() >= 1f)
+		{
+			stateMachine.SwitchStates(menuState);
+		}
 	}
 
 	void WinExit() 
 	{
-		
+		WinCanvasObject.SetActive(false);
 	}
 	#endregion
 }
