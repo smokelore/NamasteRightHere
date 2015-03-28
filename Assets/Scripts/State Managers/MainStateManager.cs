@@ -20,7 +20,10 @@ public class MainStateManager : MonoBehaviour {
 	public GameObject MenuCanvasObject;
 	public GameObject CalibrateCanvasObject;
 	public Text numSeconds;
+	public GameObject PoseCanvasObject;
+	public Text numPoints;
 	public GameObject WinCanvasObject;
+	public Text numScore;
 
 	#endregion
 
@@ -28,6 +31,8 @@ public class MainStateManager : MonoBehaviour {
 	{
 		instance = this;
 		Input.gyro.enabled = true;
+
+		PoseCanvasObject.SetActive(false);
 		CalibrateCanvasObject.SetActive(false);
 		WinCanvasObject.SetActive(false);
 	}
@@ -46,7 +51,7 @@ public class MainStateManager : MonoBehaviour {
 
 	void Update() 
 	{
-		Debug.Log("Angle: " + Input.gyro.attitude);
+		//Debug.Log("Angle: " + Input.gyro.attitude);
 		Execute();
 	}
 
@@ -59,6 +64,7 @@ public class MainStateManager : MonoBehaviour {
 	#region MENU
 	void MenuEnter() 
 	{
+		SoundHandler.instance.Mute(true);
 		MenuCanvasObject.SetActive(true);
 	}
 
@@ -73,6 +79,7 @@ public class MainStateManager : MonoBehaviour {
 	void MenuExit()
 	{
 		MenuCanvasObject.SetActive(false);
+		SoundHandler.instance.Mute(false);
 	}
 	#endregion
 
@@ -107,10 +114,13 @@ public class MainStateManager : MonoBehaviour {
 
 	#region POSE
 	int score = 0;
+	Timer poseTimer;
 
 	void PoseEnter() 
 	{
-		
+		PoseCanvasObject.SetActive(true);
+		poseTimer = new Timer(120f);
+		numPoints.text = "" + score;
 	}
 
 	void PoseUpdate() 
@@ -122,9 +132,10 @@ public class MainStateManager : MonoBehaviour {
 			Sphere.SetNextTargetPosition();
 			Handheld.Vibrate();
 			score++;
+			numPoints.text = "" + score;
 		}
 
-		if (score > 20)
+		if (poseTimer.Percent() >= 1f)
 		{
 			stateMachine.SwitchStates(winState);
 		}
@@ -132,7 +143,7 @@ public class MainStateManager : MonoBehaviour {
 
 	void PoseExit()
 	{
-
+		PoseCanvasObject.SetActive(false);
 	}
 	#endregion
 
@@ -141,7 +152,9 @@ public class MainStateManager : MonoBehaviour {
 	void WinEnter() 
 	{
 		WinCanvasObject.SetActive(true);
+		numScore.text = "" + score;
 		winTimer = new Timer(10.0f);
+		SoundHandler.instance.Mute(true);
 	}
 
 	void WinUpdate() 
