@@ -1970,6 +1970,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccbc95aaf61e0d64a81c5205e0de0893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  volumeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: .999999881
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: .283756644
+      value: .520581961
+      inSlope: -1.86383724
+      outSlope: -1.86383724
+      tangentMode: 0
+    - time: .998483181
+      value: .0127176326
+      inSlope: -.112350971
+      outSlope: -.112350971
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
   sineX: {fileID: 93543857}
   sineY: {fileID: 338590076}
   sineZ: {fileID: 1907909127}

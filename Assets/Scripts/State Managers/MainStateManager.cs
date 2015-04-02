@@ -64,6 +64,7 @@ public class MainStateManager : MonoBehaviour {
 	#region MENU
 	void MenuEnter() 
 	{
+		score = 0;
 		SoundHandler.instance.Mute(true);
 		MenuCanvasObject.SetActive(true);
 	}
@@ -88,6 +89,7 @@ public class MainStateManager : MonoBehaviour {
 
 	void CalibrateEnter() 
 	{
+		Input.gyro.enabled = true;
 		CalibrateCanvasObject.SetActive(true);
 		calibrateTimer = new Timer(10.0f);
 	}
@@ -133,6 +135,10 @@ public class MainStateManager : MonoBehaviour {
 			Handheld.Vibrate();
 			score++;
 			numPoints.text = "" + score;
+		}
+		else if (Sphere.Handle.hitTimer > 0f)
+		{
+			Handheld.Vibrate();
 		}
 
 		if (poseTimer.Percent() >= 1f)

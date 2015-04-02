@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class SoundHandler : MonoBehaviour
 {
 	public static SoundHandler instance;
+	public AnimationCurve volumeCurve;
 	public AudioSource sineX, sineY, sineZ;
 
 	void Awake ()
@@ -39,8 +40,9 @@ public class SoundHandler : MonoBehaviour
 		sineY.pitch = 1f + 0.4f * amount.y;
 		sineZ.pitch = 1f + 0.4f * amount.z;
 
-		sineX.volume = 1.5f - Mathf.Pow(amount.magnitude/2f, 0.1f);
-		sineY.volume = 1.5f - Mathf.Pow(amount.magnitude/2f, 0.1f);
-		sineZ.volume = 1.5f - Mathf.Pow(amount.magnitude/2f, 0.1f);
+		float newVolume = volumeCurve.Evaluate(amount.magnitude/2f);
+		sineX.volume = newVolume;
+		sineY.volume = newVolume;
+		sineZ.volume = newVolume;
 	}
 }
