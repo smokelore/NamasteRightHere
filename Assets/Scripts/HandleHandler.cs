@@ -52,7 +52,7 @@ public class HandleHandler : MonoBehaviour
 	void OnCollisionEnter(Collision collision)
 	{
 		Collider otherCollider = collision.collider;
-		if (collider.gameObject == Target)
+		if (GetComponent<Collider>().gameObject == Target)
 		{
 			// Hitting the target
 			hittingTarget = true;
@@ -62,7 +62,7 @@ public class HandleHandler : MonoBehaviour
 	void OnCollisionExit(Collision collision)
 	{
 		Collider otherCollider = collision.collider;
-		if (collider.gameObject == Target)
+		if (GetComponent<Collider>().gameObject == Target)
 		{
 			// No longer hitting the target
 			hittingTarget = false;
